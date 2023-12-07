@@ -3,7 +3,7 @@ import java.time.Period;
 import java.util.*;
 public class Competitor {
 	private int competitorNo;
-	private String name, email, country;
+	private String name, gender, email, country;
 	private LocalDate birthDate;
 	private Float overallScore;
 	private ArrayList<String> category = new ArrayList<>() ;
@@ -11,9 +11,11 @@ public class Competitor {
 	private HashMap<String, Float> overallPerCategory = new HashMap<String, Float>();
 	private HashMap<String, String> categoryLevels = new HashMap<String, String>();
 	
-	public Competitor (String name, String email, String country, String YYYY, String MM, String DD, String Category, String lvl)
+	public Competitor (int idNo, String name, String gender, String email, String country, String YYYY, String MM, String DD, String Category, String lvl)
 	{
+		this.competitorNo = idNo;
 		this.name = name;
+		this.gender = gender;
 		this.email = email;
 		this.country = country;
 		category.add(Category);
@@ -40,15 +42,24 @@ public class Competitor {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public void setCountryName(String country) {
+	public void setCountry(String country) {
 		this.country = country;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 	
 	//getters
+	public int getParticipantNo(){
+		return this.competitorNo;
+	}
 	public String getName() {
 		return name;
 	}
-	public String getCountryName() {
+	public String getGender() {
+		return gender;
+	}
+	public String getCountry() {
 		return country;
 	}
 	public int getAge() {
@@ -57,6 +68,7 @@ public class Competitor {
 		int age = period.getYears();
 		return age;
 	}
+	
 	public float getOverall() {
 		float avg = 0;
 		for (String key:overallPerCategory.keySet()) {
@@ -66,11 +78,20 @@ public class Competitor {
 		this.overallScore = avg;
 		return avg;
 	}
-	public ArrayList<Integer> getScoreArray(String categ){
+	public ArrayList<Integer> getScoreArraypc(String categ){
 		ArrayList<Integer> scoreList = new ArrayList<Integer>();
 		for (String key:scorePerCategory.keySet()) {
 			if (categ == key) {
 				scoreList = scorePerCategory.get(key);
+			}
+		}
+		return scoreList;
+	}
+	public ArrayList<Integer> getScoreArray(){
+		ArrayList<Integer> scoreList = new ArrayList<Integer>();
+		for (String key:scorePerCategory.keySet()) {
+			for (int n: scorePerCategory.get(key)) {
+				scoreList.add(n);
 			}
 		}
 		return scoreList;
@@ -83,7 +104,7 @@ public class Competitor {
 		}
 		return ini;
 	}
-	public String getLevel(String categ) {
+	public String getLevelpc(String categ) {
 		String lev = null;
 		for (String key:categoryLevels.keySet()) {
 			if (categ == key) {
@@ -92,12 +113,19 @@ public class Competitor {
 		}
 		return lev;
 	}
+	public String getLevel() {
+		String lev = "";
+		for (String key:categoryLevels.keySet()) {
+			lev += categoryLevels.get(key);
+		}
+		return lev;
+	}
 	
 	//String methods
 	public String listScores(){
 		String scoreList = "Categories: \n\t";
 		for (String key:scorePerCategory.keySet()) {
-			scoreList = scoreList + key + ":" ;
+			scoreList = scoreList + key + " - "+ categoryLevels.get(key)+ ":" ;
 			for (int i=0;i<scorePerCategory.get(key).size(); i++) {
 				scoreList = scoreList + String.format("\t%d", scorePerCategory.get(key).get(i));
 			}
@@ -107,35 +135,36 @@ public class Competitor {
 	}
 	public String getFullDetails() {
 		String[] names = name.split(" ");
-		String details = String.format("Competitor number %d, name %s, country %s.\n%s is a %s aged %d and received these scores: %s\nThis gives him an overall score of %.2f", competitorNo, name, country, names[0], categoryLevels.get(category.get(0)),getAge(),getScoreList(),overallScore);
+		String details = String.format("\t\tCompetitor #%d: name %s, first name %s\n\t\tCountry: %s\n\t\tAge: %d\n\t\tScores: %s\n\t\tOverall Score: %.2f\n", competitorNo, name,  names[0], country, getAge(), listScores(), getOverall());
 		return details;
 	}
 	
 	public String getShortDetails() {
-		String dets = String.format("CN %d (%s) has overall score %f", competitorNo, getInitials(), getOverall());
+		String dets = String.format("CN #%d (%s): Overall score %.2f", competitorNo, getInitials(), getOverall());
 		return dets;
 	}
 	
 	//Insertion and Update methods
 	public void insertScore(String categ, int score) {
 		for (String key:scorePerCategory.keySet()){
-			if ((key == categ) && (1 <= score) && (score <= 6)) {
+			if ((key == categ) && (0 <= score) && (score <= 5)) {
 				ArrayList<Integer> list = scorePerCategory.get(key);
 				list.add(score);
 				scorePerCategory.put(key, list);
-			}else if((1>score) || (score>6)) {
-				System.out.println("Invalid Score. Enter a number within the acceptable range of 1-6");
+			}else if((0>score) || (score>5)) {
+				System.out.println("Invalid Score. Enter a number within the acceptable range of 0-5");
 			}
 		}
 		updateOverallpcScore();
 	}
+	
 	public void updateOverallpcScore() {
 		for (String key:scorePerCategory.keySet()){
 			float avg = 0;
 			for (int value : scorePerCategory.get(key)) {
 				avg += value;
 			}
-			avg /= scorePerCategory.size();
+			avg /= scorePerCategory.get(key).size();
 			overallPerCategory.put(key, avg);
 		}
 	}

@@ -34,7 +34,7 @@ public class Category {
 	public Set<Competitor> getCompetitorsbyCategoryLevel(String lvl) {
 		Set<Competitor> result = null;
 		for (Competitor c : this.competitors) {
-			if(lvl == c.getLevel(this.name)) {
+			if(lvl == c.getLevelpc(this.name)) {
 				result.add(c);
 			}
 		}
@@ -68,7 +68,7 @@ public class Category {
 		Set <Competitor> win = getWinners();
 		Competitor winner = null;
 		for (Competitor c : win) {
-			if(lvl == c.getLevel(this.name)) {
+			if(lvl == c.getLevel()) {
 				winner = c;
 			}
 		}
@@ -77,7 +77,7 @@ public class Category {
 	
 	//to add objects
 	public void addCompetitor(Competitor competitor) {
-		String lvlName = competitor.getLevel(this.name);
+		String lvlName = competitor.getLevel();
 		for (Level lvl : level) {
 			if (lvlName == lvl.getName()){
 				lvl.addCompetitor(competitor);
