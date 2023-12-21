@@ -5,7 +5,6 @@ import java.io.IOException;
 
 public class CompetitorList {
 	private ArrayList<Competitor> competitorList = new ArrayList<Competitor>();
-	private String categoryClass;
 	
 	public CompetitorList(String fp) throws IOException{
 		inputCompetitor(fp);
@@ -17,11 +16,10 @@ public class CompetitorList {
 		while (reader.ready()) {
 			line = reader.readLine();
 			String[] data = line.split(",");
-			this.categoryClass = data[7];
 			String[] DoB = data[3].split("/");
-			Competitor comp = new Competitor(Integer.parseInt(data[0]),data[1],data[5], data[2],data[6],DoB[2],DoB[1],DoB[0],data[7],data[8]);	
+			Competitor comp = new Runner(Integer.parseInt(data[0]),data[1],data[5], data[2],data[6],DoB[2],DoB[1],DoB[0],data[7],data[8]);	
 			for (int i = 0; i < 5; i++) {
-				comp.insertScore(data[7], Integer.parseInt(data[9+i]));
+				comp.insertScore(Integer.parseInt(data[9+i]));
 			}
 			competitorList.add(comp);
 		}
@@ -99,7 +97,7 @@ public class CompetitorList {
 			}
 		}
 		for(Map.Entry<Integer, Integer> entry:count.entrySet()) { 
-			output = output + String.format("%d\t|%d\n", entry.getKey(), entry.getValue());
+			output = output + String.format("%d\t|\t%d\n", entry.getKey(), entry.getValue());
 		}
 	output = output + "------------------------------";
 	return output;
@@ -202,8 +200,8 @@ public class CompetitorList {
 		for (Competitor c : competitorList) {
 			if ( !scorersbyLevel.containsKey(c.getLevel()) ){
 				scorersbyLevel.put(c.getLevel(), new HashMap<String, List<Competitor>>());
-				scorersbyLevel.get(c.getLevel()).put("Min", new ArrayList());
-				scorersbyLevel.get(c.getLevel()).put("Max", new ArrayList());	
+				scorersbyLevel.get(c.getLevel()).put("Min", new ArrayList<Competitor>());
+				scorersbyLevel.get(c.getLevel()).put("Max", new ArrayList<Competitor>());	
 			}
 			//boolean minCondition = c.getOverall() < scorersbyLevel.get(c.getLevel()).get("Min").getOverall();
 			//boolean maxCondition = c.getOverall() > scorersbyLevel.get(c.getLevel()).get("Max").getOverall();
@@ -224,8 +222,8 @@ public class CompetitorList {
 		for (Competitor c : competitorList) {
 			if ( !scorersbyGender.containsKey(c.getGender()) ){
 				scorersbyGender.put(c.getGender(), new HashMap<String, List<Competitor>>());
-				scorersbyGender.get(c.getGender()).put("Min", new ArrayList());
-				scorersbyGender.get(c.getGender()).put("Max", new ArrayList());	
+				scorersbyGender.get(c.getGender()).put("Min", new ArrayList<Competitor>());
+				scorersbyGender.get(c.getGender()).put("Max", new ArrayList<Competitor>());	
 			}
 			//boolean minCondition = c.getOverall() < scorersbyGender.get(c.getGender()).get("Min").getOverall();
 			//boolean maxCondition = c.getOverall() > scorersbyGender.get(c.getGender()).get("Max").getOverall();
@@ -246,8 +244,8 @@ public class CompetitorList {
 		for (Competitor c : competitorList) {
 			if ( !scorersbyCountry.containsKey(c.getCountry()) ){
 				scorersbyCountry.put(c.getCountry(), new HashMap<String, List<Competitor>>());
-				scorersbyCountry.get(c.getCountry()).put("Min", new ArrayList());
-				scorersbyCountry.get(c.getCountry()).put("Max", new ArrayList());	
+				scorersbyCountry.get(c.getCountry()).put("Min", new ArrayList<Competitor>());
+				scorersbyCountry.get(c.getCountry()).put("Max", new ArrayList<Competitor>());	
 			}
 			//boolean minCondition = c.getOverall() < scorersbyCountry.get(c.getCountry()).get("Min").getOverall();
 			//boolean maxCondition = c.getOverall() > scorersbyCountry.get(c.getCountry()).get("Max").getOverall();
@@ -343,6 +341,7 @@ public class CompetitorList {
 		}
 		return ageRangebyCountry;
 		}
+	
 	
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub

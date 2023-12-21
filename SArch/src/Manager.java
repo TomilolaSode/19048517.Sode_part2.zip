@@ -2,23 +2,24 @@ import java.util.*;
 import java.io.*;
 
 public class Manager{
-	CompetitorList list;
+	private CompetitorList list;
 	
 	public Manager() throws IOException{
 		list = new CompetitorList("C:\\Users\\tomil\\OneDrive\\Desktop\\RunCompetitor.csv");
 	}
 	
 	public void searchforCompetitor() {
-		Scanner input = new Scanner(System.in);
-		System.out.println("Enter Competitor ID: ");
-		String errorMessage = "The ID number entered does not exist.";
-		int competitorID = input.nextInt();
-		Competitor c = null;
-		if (list.getCompetitor(competitorID) != null) {
-			c = list.getCompetitor(competitorID);
-			System.out.println(c.getShortDetails());
-		}else {
-			System.out.println(errorMessage);
+		try (Scanner input = new Scanner(System.in)) {
+			System.out.println("Enter Competitor ID: ");
+			String errorMessage = "The ID number entered does not exist.";
+			int competitorID = input.nextInt();
+			Competitor c = null;
+			if (list.getCompetitor(competitorID) != null) {
+				c = list.getCompetitor(competitorID);
+				System.out.println(c.getShortDetails());
+			}else {
+				System.out.println(errorMessage);
+			}
 		}
 	}
 	
@@ -77,7 +78,12 @@ public class Manager{
 			System.out.printf("\n•Average Overall Score: %.2f\n\n", list.getAveragebyCountry().get(country));
 			System.out.printf("TOP AND LOW SCORERS:\n\t\t•Top Scorer from %s: %s\n\t\t•Lowest Scorer from %s: %s\n\n", country, list.getScorersbyCountry().get(country).get("Max").get(0).getShortDetails(), country, list.getScorersbyCountry().get(country).get("Min").get(0).getShortDetails());
 		}	
-		}
+		//Score Frequency Table
+		decoratedHeaderLines();
+		System.out.println("Score Frequency Table");
+		decoratedHeaderLines();
+		System.out.println(list.getfrequencyScores());
+}
 		
 	
 	public static void main(String[] args) throws IOException {

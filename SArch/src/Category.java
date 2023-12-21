@@ -31,15 +31,7 @@ public class Category {
 	public Set<Competitor> getCompetitors() {
 		return competitors;
 	}
-	public Set<Competitor> getCompetitorsbyCategoryLevel(String lvl) {
-		Set<Competitor> result = null;
-		for (Competitor c : this.competitors) {
-			if(lvl == c.getLevelpc(this.name)) {
-				result.add(c);
-			}
-		}
-		return result;
-	}
+	
 	public Set<Competitor> getWinners() {
 		Set<Competitor> result = new HashSet<>();
 		Float max = null;
