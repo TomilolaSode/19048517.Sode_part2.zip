@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,22 +43,11 @@ public class CompetitionGUI extends JFrame {
         JPanel filterPanel = new JPanel(new GridLayout(5, 2));
         filterPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
 
-        levelComboBox = new JComboBox<>();
-        levelComboBox.addItem("All");
-        levelComboBox.addItem("Beginner");
-        levelComboBox.addItem("Intermediate");
-        levelComboBox.addItem("Advanced");
-        genderComboBox = new JComboBox<>();
-        genderComboBox.addItem("All");
-        genderComboBox.addItem("Male");
-        genderComboBox.addItem("Female");
-        genderComboBox.addItem("Other");
+        levelComboBox = new JComboBox<>(new String[] {"All","Beginner","Intermediate","Advanced"});
+        genderComboBox = new JComboBox<>(new String[] {"All","Male", "Female", "Other"});
         ageComboBox = new JComboBox<>();
         ageComboBox.addItem("All");
-        categoryComboBox = new JComboBox<>();
-        categoryComboBox.addItem("All");
-        categoryComboBox.addItem("Running");
-        categoryComboBox.addItem("Swimming");
+        categoryComboBox = new JComboBox<>(new String[] {"All","Running", "Swimming"});
 
         filterPanel.add(new JLabel("Level:"));
         filterPanel.add(levelComboBox);
@@ -145,10 +135,14 @@ public class CompetitionGUI extends JFrame {
         });
         
         //Button to Edit contents in Table
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = competitorListTable.getSelectedRow();
+        //editButton.addActionListener(new ActionListener() {
+           // @Override
+            //public void actionPerformed(ActionEvent e) {
+           // 	createDialog("Edit Competitor", true); 
+       // }
+       // });
+        
+                /*int selectedRow = competitorListTable.getSelectedRow();
                 if (selectedRow != -1) {
                     // Get the competitor to edit
                     Competitor competitor = competitors.get(selectedRow);
@@ -157,12 +151,14 @@ public class CompetitionGUI extends JFrame {
                     JDialog editDialog = new JDialog(CompetitionGUI.this, "Edit Competitor", true);
                     editDialog.setLayout(new GridLayout(9, 2));
 
+                    
                     JTextField idField = new JTextField(String.valueOf(competitor.getParticipantNo()));
                     JTextField nameField = new JTextField(competitor.getName());
                     JTextField genderField = new JTextField(competitor.getGender());
                     JTextField emailField = new JTextField(competitor.getEmail());
                     JTextField countryField = new JTextField(competitor.getCountry());
 
+                    
                     // Assuming dob is a Date, you can use a JDateChooser to edit the date
                     JDateChooser dobChooser = new JDateChooser();
                     LocalDate date = LocalDate.parse(competitor.getDoB());
@@ -241,11 +237,54 @@ public class CompetitionGUI extends JFrame {
                     JOptionPane.showMessageDialog(null, "Please select a row to edit.");
                 }
             }
-        });
+            	
+        });*/
         
         //Button to add content to Table
-        addButton.addActionListener(new ActionListener() {
-            @Override
+       // addButton.addActionListener(new ActionListener() {
+        //	createDialog("Add Competitor", false);
+        //});
+        ActionListener addOrEdit = new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		JDialog dialog = new JDialog(CompetitionGUI.this, title, true);
+        	    dialog.setLayout(new GridLayout(9, 2));
+
+        	    JTextField idField = new JTextField();
+        	    JTextField nameField = new JTextField();
+        	    JComboBox<String> levelField = new JComboBox<>(new String[] {"", "Beginner", "Intermediate", "Advanced"});
+        	    JTextField emailField = new JTextField();
+        	    JDateChooser dobField = new JDateChooser();
+        	    JComboBox<String> categoryField = new JComboBox<>(new String[] {"", "Running", "Swimming"});
+        	    JComboBox<String> genderField = new JComboBox<>(new String[] {"", "Male", "Female", "Other"});
+        	    List<String> countries = Arrays.asList("USA", "Canada", "UK", "Brazil", "UAE", "France", "Germany", "Nigeria", "Ghana");
+        	    JComboBox<String> countryField = new JComboBox<>(new DefaultComboBoxModel<>(countries.toArray(new String[0])));
+
+        	    dialog.add(new JLabel("IdNo:"));
+                dialog.add(idField);
+                dialog.add(new JLabel("Name:"));
+                dialog.add(nameField);
+                dialog.add(new JLabel("Gender:"));
+                dialog.add(genderField);
+                dialog.add(new JLabel("Email:"));
+                dialog.add(emailField);
+                dialog.add(new JLabel("Country:"));
+                dialog.add(countryField);
+                dialog.add(new JLabel("DoB:"));
+                dialog.add(dobField);
+                dialog.add(new JLabel("Category:"));
+                dialog.add(categoryField);
+                dialog.add(new JLabel("Level:"));
+                dialog.add(levelField);
+                
+                
+                if (e.getSource() == addButton) {
+                	
+                }
+        	}
+        }
+
+        	/*@Override
             public void actionPerformed(ActionEvent e) {
                 // Create a dialog for adding a new competitor
                 JDialog addDialog = new JDialog(CompetitionGUI.this, "Add Competitor", true);
@@ -253,14 +292,14 @@ public class CompetitionGUI extends JFrame {
 
                 JTextField idField = new JTextField();
                 JTextField nameField = new JTextField();
-                JTextField genderField = new JTextField();
+                JComboBox<String> levelField = new JComboBox<>(new String[] {"","Beginner","Intermediate","Advanced"});
                 JTextField emailField = new JTextField();
-                JTextField countryField = new JTextField();
                 JDateChooser dobField = new JDateChooser();
-                JTextField ageField = new JTextField();
-                JTextField categoryField = new JTextField();
-                JTextField levelField = new JTextField();
-
+                JComboBox<String> categoryField = new JComboBox<>(new String[] {"","Running", "Swimming"});;
+                JComboBox<String> genderField = new JComboBox<>(new String[] {"","Male","Female","Other"});
+                List<String> countries = Arrays.asList("USA", "Canada", "UK", "Brazil", "UAE", "France", "Germany", "Nigeria", "Ghana");
+                JComboBox<String> countryField = new JComboBox<>(new DefaultComboBoxModel<>(countries.toArray(new String[0])));
+                
                 addDialog.add(new JLabel("IdNo:"));
                 addDialog.add(idField);
                 addDialog.add(new JLabel("Name:"));
@@ -288,9 +327,9 @@ public class CompetitionGUI extends JFrame {
                         try {
                             int id = Integer.parseInt(idField.getText());
                             String name = nameField.getText();
-                            String gender = genderField.getText();
+                            String gender = (String) genderField.getSelectedItem();
                             String email = emailField.getText();
-                            String country = countryField.getText();
+                            String country = (String) countryField.getSelectedItem();
                             Date dob = dobField.getDate();
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(dob);
@@ -298,8 +337,8 @@ public class CompetitionGUI extends JFrame {
                             String m = Integer.toString(calendar.get(Calendar.MONTH)+1);
                             String d = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
                             //int age = Integer.parseInt(ageField.getText());
-                            String category = categoryField.getText();
-                            String level = levelField.getText();
+                            String category = (String) categoryField.getSelectedItem();
+                            String level = (String) levelField.getSelectedItem();
 
                             // Create a new competitor
                             //Competitor newCompetitor = null;
@@ -324,7 +363,7 @@ public class CompetitionGUI extends JFrame {
                 addDialog.setLocationRelativeTo(CompetitionGUI.this);
                 addDialog.setVisible(true);
             }
-        });
+        });*/
         
         
         insertFromButton.addActionListener(new ActionListener() {
@@ -339,7 +378,6 @@ public class CompetitionGUI extends JFrame {
         
         saveButton.addActionListener(new ActionListener() {
         	@Override 
-        	
         	public void actionPerformed(ActionEvent e) {
         		JFileChooser fileChooser = new JFileChooser();
 
@@ -385,6 +423,152 @@ public class CompetitionGUI extends JFrame {
 	        }
 	    }
 	}
+	
+	private void createDialog(String title, boolean isEditMode) {
+	    JDialog dialog = new JDialog(CompetitionGUI.this, title, true);
+	    dialog.setLayout(new GridLayout(9, 2));
+
+	    JTextField idField = new JTextField();
+	    JTextField nameField = new JTextField();
+	    JComboBox<String> levelField = new JComboBox<>(new String[] {"", "Beginner", "Intermediate", "Advanced"});
+	    JTextField emailField = new JTextField();
+	    JDateChooser dobField = new JDateChooser();
+	    JComboBox<String> categoryField = new JComboBox<>(new String[] {"", "Running", "Swimming"});
+	    JComboBox<String> genderField = new JComboBox<>(new String[] {"", "Male", "Female", "Other"});
+	    List<String> countries = Arrays.asList("USA", "Canada", "UK", "Brazil", "UAE", "France", "Germany", "Nigeria", "Ghana");
+	    JComboBox<String> countryField = new JComboBox<>(new DefaultComboBoxModel<>(countries.toArray(new String[0])));
+
+	    dialog.add(new JLabel("IdNo:"));
+        dialog.add(idField);
+        dialog.add(new JLabel("Name:"));
+        dialog.add(nameField);
+        dialog.add(new JLabel("Gender:"));
+        dialog.add(genderField);
+        dialog.add(new JLabel("Email:"));
+        dialog.add(emailField);
+        dialog.add(new JLabel("Country:"));
+        dialog.add(countryField);
+        dialog.add(new JLabel("DoB:"));
+        dialog.add(dobField);
+        dialog.add(new JLabel("Category:"));
+        dialog.add(categoryField);
+        dialog.add(new JLabel("Level:"));
+        dialog.add(levelField);
+        
+	    if (isEditMode) {
+	    	int selectedRow = competitorListTable.getSelectedRow();
+            if (selectedRow != -1) {
+                // Get the competitor to edit
+                Competitor competitor = competitors.get(selectedRow);
+                
+                idField.setText(String.valueOf(competitor.getParticipantNo()));
+                nameField.setText(competitor.getName());
+                genderField.setSelectedItem(competitor.getGender());
+                emailField.setText(competitor.getEmail());
+                countryField.setSelectedItem(competitor.getCountry());
+                categoryField.setSelectedItem(competitor.getCategory());
+                levelField.setSelectedItem(competitor.getLevel());
+                
+                // Assuming dob is a Date, you can use a JDateChooser to edit the date
+                LocalDate date = LocalDate.parse(competitor.getDoB());
+                Date dt = java.sql.Date.valueOf(date);
+                dobField.setDate(dt); // Set the current date
+                JButton saveButton = new JButton("Save");
+                dialog.add(saveButton);
+
+                saveButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                     // Validate and save the edited competitor
+                try {
+                	// ... (validate input)
+
+                    // Update the competitor details
+                    competitor.setParticipantNo(Integer.parseInt(idField.getText()));
+                    competitor.setName(nameField.getText());
+                    competitor.setGender((String)genderField.getSelectedItem());
+                    competitor.setEmail(emailField.getText());
+                    competitor.setCountry((String)countryField.getSelectedItem());
+
+                    // Assuming dob is a Date
+                    competitor.setDoB(date);
+
+                    competitor.setAge(competitor.getAge());
+                    competitor.setCategory((String)categoryField.getSelectedItem());
+                    competitor.setLevel((String)levelField.getSelectedItem());
+
+                    // Update the table model
+                    tableModel.setValueAt(competitor.getParticipantNo(), selectedRow, 0);
+                    tableModel.setValueAt(competitor.getName(), selectedRow, 1);
+                    tableModel.setValueAt(competitor.getGender(), selectedRow, 2);
+                    tableModel.setValueAt(competitor.getEmail(), selectedRow, 3);
+                    tableModel.setValueAt(competitor.getCountry(), selectedRow, 4);
+                    tableModel.setValueAt(competitor.getDoB(), selectedRow, 5);
+                    tableModel.setValueAt(competitor.getAge(), selectedRow, 6);
+                    tableModel.setValueAt(competitor.getCategory(), selectedRow, 7);
+                    tableModel.setValueAt(competitor.getLevel(), selectedRow, 8);
+
+                    // Close the dialog
+                    dialog.dispose();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Please enter valid numeric values for IdNo and Age.");
+                }
+            }
+        });
+
+        dialog.setSize(300, 300);
+        dialog.setLocationRelativeTo(CompetitionGUI.this);
+        dialog.setVisible(true);
+        }else {
+                // Show a message indicating no row is selected
+                JOptionPane.showMessageDialog(null, "Please select a row to edit.");
+            }
+	 }else{
+	    	JButton addButton = new JButton("Add");
+            dialog.add(addButton);
+            addButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    // Validate and add the new competitor
+                    try {
+                        int id = Integer.parseInt(idField.getText());
+                        String name = nameField.getText();
+                        String gender = (String) genderField.getSelectedItem();
+                        String email = emailField.getText();
+                        String country = (String) countryField.getSelectedItem();
+                        Date dob = dobField.getDate();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(dob);
+                        String y = Integer.toString(calendar.get(Calendar.YEAR));
+                        String m = Integer.toString(calendar.get(Calendar.MONTH)+1);
+                        String d = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+                        String category = (String) categoryField.getSelectedItem();
+                        String level = (String) levelField.getSelectedItem();
+
+                        // Create a new competitor
+                        //Competitor newCompetitor = null;
+                        //if (category.equals("Running")) {
+                        Competitor newCompetitor = new Runner(id, name, gender, email, country, y, m, d, category, level);
+                        //}else if(category.equals("Swimming")) {
+                        	//newCompetitor = new Swimmer(id, name, gender, email, country, y, m, d, category, level);
+                        //}
+
+                        // Add the new competitor to the list and table model
+                        competitors.add(newCompetitor);
+                        updateCompetitorList();
+                        // Close the dialog
+                        dialog.dispose();
+                    }catch (NumberFormatException ex) {
+    	                JOptionPane.showMessageDialog(null, "Please enter valid numeric values for IdNo.");
+    	            }
+                }
+            });
+	    dialog.setSize(300, 300);
+	    dialog.setLocationRelativeTo(CompetitionGUI.this);
+	    dialog.setVisible(true);
+	    }
+	}
+	
 	
 	//Update View 
     void updateCompetitorList() {
