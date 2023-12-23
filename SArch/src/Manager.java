@@ -1,12 +1,19 @@
 import java.util.*;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 import java.io.*;
 
 public class Manager{
 	private CompetitorList list;
+	//private CompetitionGUI gui;
+	
 	
 	public Manager() throws IOException{
 		list = new CompetitorList("C:\\Users\\tomil\\OneDrive\\Desktop\\RunCompetitor.csv");
 	}
+	
 	
 	public void searchforCompetitor() {
 		try (Scanner input = new Scanner(System.in)) {
@@ -23,13 +30,90 @@ public class Manager{
 		}
 	}
 	
+	
+	public void saveCompetitorsToFile(String fp) {
+		try {
+			if (!fp.endsWith(".csv")) {
+				fp += ".csv";
+			}
+	        FileWriter fileWriter = new FileWriter(fp); 
+	        PrintWriter printWriter = new PrintWriter(fileWriter);
+
+	        // Write competitor data in CSV format
+	        for (Competitor competitor : list.getCompetitors()) {
+	            printWriter.print(competitor.getParticipantNo()); // Write participant number
+	            printWriter.print(",");
+	            printWriter.print(competitor.getName()); // Write name
+	            printWriter.print(",");
+	            printWriter.print(competitor.getEmail()); // Write email address
+	            printWriter.print(",");
+	            printWriter.print(competitor.getDoB()); // Write date of birth
+	            printWriter.print(",");
+	            printWriter.print(competitor.getAge()); // Write age
+	            printWriter.print(",");
+	            printWriter.print(competitor.getGender()); // Write gender
+	            printWriter.print(",");
+	            printWriter.print(competitor.getCountry()); // Write country
+	            printWriter.print(",");
+	            printWriter.print(competitor.getCategory()); // Write category
+	            printWriter.print(",");
+	            printWriter.print(competitor.getLevel()); // Write level
+	            printWriter.print(",");
+	            for(int i=0; i<competitor.getScoreArray().size()-1; i++) {
+	            	printWriter.print(competitor.getScoreArray().get(i)); // Write Scores
+	            	printWriter.print(",");
+	            }
+	            printWriter.print(competitor.getScoreArray().get(competitor.getScoreArray().size()-1)); // Write final score
+	            printWriter.println();
+	        }
+	        printWriter.close();
+	        JOptionPane.showMessageDialog(null, "Competitors saved to CSV file successfully!"); // Inform the user of success
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(null, "Error saving competitors to CSV file: " + e.getMessage());
+	    }
+	}
+	
+	public void handleInsertFromFile() {
+	    JFileChooser fileChooser = new JFileChooser();
+	    int result = fileChooser.showOpenDialog(null);
+	    if (result == JFileChooser.APPROVE_OPTION) {
+	        File selectedFile = fileChooser.getSelectedFile();
+	        // Determine file format (CSV or JSON) and read data
+	        try {
+	            if (selectedFile.getName().endsWith(".csv")) {
+	                list.inputCompetitorsFromCSVFile(selectedFile.getAbsolutePath());
+	            } /*else if (selectedFile.getName().endsWith(".json")) {
+	                readCompetitorsFromJSON(selectedFile.getAbsolutePath());
+	            }*/ else {
+	                JOptionPane.showMessageDialog(null, "Unsupported file format.");
+	            }
+	        } catch (IOException e) {
+	            JOptionPane.showMessageDialog(null, "Error reading file: " + e.getMessage());
+	        }
+	        // Notify the GUI to update the table
+	        //gui.updateCompetitorList();
+	    }
+	}
+	
+	public CompetitorList getList() {
+		return this.list;
+	}
+	
+	/*private void readCompetitorsFromJSON(String fp) {
+		list.inputCompetitorsFromJSONFile(fp);
+	}
+	private void readCompetitorsFromCSV(String fp) throws IOException {
+		list.inputCompetitorsFromCSVFile(fp);
+	}*/
+
+
 	public void decoratedHeaderLines() {
 		System.out.println("**********************************************************************************************************************************************");
 	}
 	public void decoratedSubHeaderLines() {
 		System.out.println("***************************************************************************");
 	}
-	
 	public void generateReport() {
 		decoratedHeaderLines();
 		System.out.println("\t\t\t\t\t\tCompetition Statistics Report");
@@ -84,13 +168,14 @@ public class Manager{
 		decoratedHeaderLines();
 		System.out.println(list.getfrequencyScores());
 }
-		
+
 	
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		Manager tomi = new Manager();
+		CompetitionGUI gui = new CompetitionGUI(tomi);
 		//tomi.searchforCompetitor();
-		tomi.generateReport();
+		gui.setVisible(true);
 	}
 
 }

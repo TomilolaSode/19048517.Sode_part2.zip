@@ -5,12 +5,25 @@ import java.io.IOException;
 
 public class CompetitorList {
 	private ArrayList<Competitor> competitorList = new ArrayList<Competitor>();
-	
+	private String path = "";
 	public CompetitorList(String fp) throws IOException{
-		inputCompetitor(fp);
+		path = fp;
+		inputCompetitorsFromCSVFile(fp);
 	}
-	
-	public void inputCompetitor(String filepath) throws IOException {
+		
+	public ArrayList<Competitor> getCompetitors() {
+		return competitorList;
+	}
+	public String getPath() {
+		return this.path;
+	}
+	public void inputCompetitor(Competitor n) {
+		competitorList.add(n);
+	}
+	public void inputCompetitorsFromCSVFile(String filepath) throws IOException {
+		if (competitorList.isEmpty() == false) {
+			competitorList.clear();
+		}
 		BufferedReader reader = new BufferedReader(new FileReader(filepath));
 		String line;
 		while (reader.ready()) {
@@ -67,6 +80,7 @@ public class CompetitorList {
 		}
 		return output;
 	}
+	
 	public Competitor getCompetitor(int idNo) {
 		Competitor comp = null;
 		for (Competitor c : competitorList) {
@@ -76,6 +90,7 @@ public class CompetitorList {
 		}
 		return comp;
 	}
+
 	public ArrayList<Integer> getScoresAchieved(){
 		ArrayList<Integer> scores = new ArrayList<>();
 		for (Competitor c: competitorList) {
@@ -85,6 +100,12 @@ public class CompetitorList {
 		}
 		return scores;
 	}
+	
+	public void removeCompetitor(Competitor c) {
+		competitorList.remove(c);
+	}
+	
+	
 	public String getfrequencyScores() {
 		String output = "\nFrequency Table\n------------------------------\nScore\t|\tFrequency\n";
 		Map<Integer, Integer> count = new HashMap<Integer, Integer>();

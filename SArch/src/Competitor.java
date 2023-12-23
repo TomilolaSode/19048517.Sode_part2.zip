@@ -6,12 +6,10 @@ import java.util.*;
 public abstract class Competitor {
 	private int competitorNo;
 	private String name, gender, email, country, category, level, dob;
+	private int age; 
 	private LocalDate birthDate;
 	private Float overallScore;
 	private ArrayList<Integer> scores = new ArrayList<>(5); 
-	//private HashMap<String, ArrayList<Integer>> scorePerCategory = new HashMap<String, ArrayList<Integer>>();
-	//private HashMap<String, Float> overallPerCategory = new HashMap<String, Float>();
-	//private HashMap<String, String> categoryLevels = new HashMap<String, String>();
 	
 	public Competitor (int idNo, String name, String gender, String email, String country, String YYYY, String MM, String DD, String Category, String lvl)
 	{
@@ -52,7 +50,12 @@ public abstract class Competitor {
 	public void setLevel(String lvl) {
 		this.level = lvl;
 	}
-	
+	public void setDoB(LocalDate dt) {
+		this.birthDate = dt;
+	}
+	public void setAge(int a) {
+		this.age = a;
+	}
 	//getters
 	public int getParticipantNo(){
 		return this.competitorNo;
