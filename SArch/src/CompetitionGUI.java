@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.toedter.calendar.JDateChooser;
 import java.time.*;
 
@@ -16,13 +19,14 @@ public class CompetitionGUI extends JFrame {
 
     private List<Competitor> competitors;
     private JTextArea competitorListTextArea;
-    private JButton refreshButton;
-    private JTextField searchTextField;
+    private JButton searchButton;
+    private JTextField IDField, ageMinField, ageMaxField, overallMinField, overallMaxField;
     private JComboBox<String> levelComboBox, genderComboBox, ageComboBox, categoryComboBox;
     private Manager manager;
     private DefaultTableModel tableModel;
     private JTable competitorListTable;
     private String insertedFile;
+    private JCheckBox winnersCheckBox;
 
     public CompetitionGUI(Manager manager) {
     	this.manager = manager;
@@ -45,24 +49,33 @@ public class CompetitionGUI extends JFrame {
 
         levelComboBox = new JComboBox<>(new String[] {"All","Beginner","Intermediate","Advanced"});
         genderComboBox = new JComboBox<>(new String[] {"All","Male", "Female", "Other"});
-        ageComboBox = new JComboBox<>();
-        ageComboBox.addItem("All");
         categoryComboBox = new JComboBox<>(new String[] {"All","Running", "Swimming"});
-
+        ageMinField = new JTextField();
+        ageMaxField = new JTextField();
+        overallMinField = new JTextField();
+        overallMaxField = new JTextField();
+        
+        filterPanel.add(new JLabel("ID Number:"));
+        IDField = new JTextField();
+        filterPanel.add(IDField);
         filterPanel.add(new JLabel("Level:"));
         filterPanel.add(levelComboBox);
         filterPanel.add(new JLabel("Gender:"));
         filterPanel.add(genderComboBox);
-        filterPanel.add(new JLabel("Age:"));
-        filterPanel.add(ageComboBox);
+        filterPanel.add(new JLabel("Age Range:"));
+        filterPanel.add(ageMinField);
+        filterPanel.add(ageMaxField);
         filterPanel.add(new JLabel("Category:"));
         filterPanel.add(categoryComboBox);
-        filterPanel.add(new JLabel("Search:"));
-        searchTextField = new JTextField();
-        filterPanel.add(searchTextField);
-
-        refreshButton = new JButton("Refresh");
-        filterPanel.add(refreshButton);
+        filterPanel.add(new JLabel("Overall Scores Range:"));
+        filterPanel.add(overallMinField);
+        filterPanel.add(overallMaxField);
+       
+        winnersCheckBox = new JCheckBox("Winners Only");
+        filterPanel.add(winnersCheckBox);
+        
+        searchButton = new JButton("Search");
+        filterPanel.add(searchButton);
         
         // Table Panel
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -110,7 +123,7 @@ public class CompetitionGUI extends JFrame {
         tablePanel.add(new JScrollPane(competitorListTable), BorderLayout.CENTER);
         
         //Refresh Table or Add Filters
-        refreshButton.addActionListener(new ActionListener() {
+        searchButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
            updateCompetitorList();
@@ -135,7 +148,7 @@ public class CompetitionGUI extends JFrame {
         });
         
         ActionListener addOrEdit = new ActionListener() {
-        	String title;
+        String title;
         	@Override
     	public void actionPerformed(ActionEvent e) {
         	if (e.getSource() == addButton) {
@@ -235,10 +248,10 @@ public class CompetitionGUI extends JFrame {
             LocalDate date = LocalDate.parse(competitor.getDoB());
             Date dt = java.sql.Date.valueOf(date);
             dobField.setDate(dt); // Set the current date
-            JButton saveButton = new JButton("Save");
-            dialog.add(saveButton);
+            JButton editSaveButton = new JButton("Save");
+            dialog.add(editSaveButton);
 
-            saveButton.addActionListener(new ActionListener() {
+            editSaveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                  // Validate and save the edited competitor
@@ -353,18 +366,35 @@ public class CompetitionGUI extends JFrame {
         // Apply filters
         String selectedLevel = (String) levelComboBox.getSelectedItem();
         String selectedGender = (String) genderComboBox.getSelectedItem();
-        String selectedAge = (String) ageComboBox.getSelectedItem();
         String selectedCategory = (String) categoryComboBox.getSelectedItem();
-        String searchText = searchTextField.getText().toLowerCase();
-
+        int requiredID = 0;int selectedAgeMin = 0;int selectedAgeMax = 0;double selectedOverallMin = 0.0;double selectedOverallMax = 0.0;
+        boolean isWinner = winnersCheckBox.isSelected();
+        try {
+        	requiredID = Integer.parseInt(IDField.getText());
+            selectedAgeMin = Integer.parseInt(ageMinField.getText());
+            selectedAgeMax = Integer.parseInt(ageMaxField.getText());
+            selectedOverallMin = Double.parseDouble(overallMinField.getText());
+            selectedOverallMax = Double.parseDouble(overallMaxField.getText());
+        }catch(NumberFormatException e) {
+        	//System.err.println("Invalid number format in one or more fields. Please check your input.");
+        }
+        
+        Map<String, Competitor> winners = new HashMap<>();
+        Map<String, Map<String, List<Competitor>>> scorers = manager.getList().getScorersbyLevel();
+        for (Map.Entry<String, Map<String, List<Competitor>>> entry: scorers.entrySet()) {
+        	winners.put(entry.getKey(), entry.getValue().get("Max").getFirst());
+        }
+        
         tableModel.setRowCount(0); // Clear existing rows
 
         for (Competitor competitor : competitors) {
-            if ((selectedLevel.equals("All") || competitor.getLevel().equals(selectedLevel))
+        	if ((selectedLevel.equals("All") || competitor.getLevel().equals(selectedLevel))
                     && (selectedGender.equals("All") || competitor.getGender().equals(selectedGender))
-                    && (selectedAge.equals("All") || competitor.getAge()==Integer.parseInt(selectedAge))
+                    && ((selectedAgeMin==0 || selectedAgeMax==0)||competitor.getAge() >= selectedAgeMin && competitor.getAge() <= selectedAgeMax)
+                    && ((selectedOverallMin==0.0 || selectedOverallMax==0.0)||competitor.getOverall() >= selectedOverallMin && competitor.getOverall() <= selectedOverallMax)
                     && (selectedCategory.equals("All") || competitor.getCategory().equals(selectedCategory))
-                    && (competitor.getName().toLowerCase().contains(searchText))) {
+                    && (requiredID == 0||competitor.getParticipantNo() == requiredID)
+                    && (!isWinner || winners.containsValue(competitor))) {
                 tableModel.addRow(new Object[]{
                         competitor.getParticipantNo(),
                         competitor.getName(),

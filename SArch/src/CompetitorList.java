@@ -123,7 +123,7 @@ public class CompetitorList {
 	output = output + "------------------------------";
 	return output;
 	}
-
+	
 	//Totals
 	public HashMap<String, Integer> getTotalsCountry() {
 		HashMap<String, Integer> totalCompetitorsbyCountry = new HashMap<>();
