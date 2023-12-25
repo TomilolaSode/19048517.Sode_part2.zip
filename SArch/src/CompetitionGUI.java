@@ -38,7 +38,7 @@ public class CompetitionGUI extends JFrame {
 
     private void initializeUI() {
         setTitle("Competition Management System");
-        setSize(800, 400);
+        setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -82,7 +82,8 @@ public class CompetitionGUI extends JFrame {
         tableModel = new DefaultTableModel(new Object[]{"IdNo", "Name", "Gender", "Email", "Country", "DoB", "Age", "Category", "Level"}, 0);
         competitorListTable = new JTable(tableModel);
         tablePanel.add(new JScrollPane(competitorListTable), BorderLayout.CENTER);
-
+        tablePanel.setPreferredSize(new Dimension(600, 700));
+        filterPanel.setPreferredSize(new Dimension(400, 700));
         mainPanel.add(filterPanel, BorderLayout.WEST);
         mainPanel.add(tablePanel, BorderLayout.CENTER);
         
@@ -390,8 +391,8 @@ public class CompetitionGUI extends JFrame {
         for (Competitor competitor : competitors) {
         	if ((selectedLevel.equals("All") || competitor.getLevel().equals(selectedLevel))
                     && (selectedGender.equals("All") || competitor.getGender().equals(selectedGender))
-                    && ((selectedAgeMin==0 || selectedAgeMax==0)||competitor.getAge() >= selectedAgeMin && competitor.getAge() <= selectedAgeMax)
-                    && ((selectedOverallMin==0.0 || selectedOverallMax==0.0)||competitor.getOverall() >= selectedOverallMin && competitor.getOverall() <= selectedOverallMax)
+                    && ((selectedAgeMin == 0 || competitor.getAge() >= selectedAgeMin) && (selectedAgeMax == 0 || competitor.getAge() <= selectedAgeMax))
+                    && ((selectedOverallMin==0.0 || competitor.getOverall() >= selectedOverallMin) && (selectedOverallMax==0.0 || competitor.getOverall() <= selectedOverallMax))
                     && (selectedCategory.equals("All") || competitor.getCategory().equals(selectedCategory))
                     && (requiredID == 0||competitor.getParticipantNo() == requiredID)
                     && (!isWinner || winners.containsValue(competitor))) {
